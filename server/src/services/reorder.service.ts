@@ -1,7 +1,14 @@
+import { LogMessageType } from "../common/enums/log-message-type.enum";
 import { Card } from "../data/models/card";
 import { List } from "../data/models/list";
+import ReorderService from "../interfaces/reorder.service.interface";
+import { randomUUID } from 'crypto';
+import * as fs from 'fs';
+import { fileLogSubscriber, logPublisher } from "../logger/logger";
+import createLogText from "../helpers/create-log-message";
 
-class ReorderService {
+// PATTERN: Proxy
+class RealReorderService implements ReorderService {
   public reorder<T>(items: T[], startIndex: number, endIndex: number): T[] {
     const card = items[startIndex];
     const listWithRemoved = this.remove(items, startIndex);
@@ -54,4 +61,48 @@ class ReorderService {
   }
 }
 
-export { ReorderService };
+class ReorderServiceWithLogging implements ReorderService {
+  private realReorderService: RealReorderService;
+
+  constructor(realReorderService: RealReorderService) {
+    this.realReorderService = realReorderService;
+  }
+
+  public reorder<T>(items: T[], startIndex: number, endIndex: number): T[] {
+    const log = createLogText(LogMessageType.INFO, 'REORDER SERVICE: reorder method called', {items, startIndex, endIndex});
+    this.logParameters(log);
+    return this.realReorderService.reorder<T>(items, startIndex, endIndex);
+  }
+
+  public reorderCards({
+    lists,
+    sourceIndex,
+    destinationIndex,
+    sourceListId,
+    destinationListId,
+  }: {
+    lists: List[];
+    sourceIndex: number;
+    destinationIndex: number;
+    sourceListId: string;
+    destinationListId: string;
+  }): List[] {
+    const parameters = {
+      lists,
+      sourceIndex,
+      destinationIndex,
+      sourceListId,
+      destinationListId,
+    }
+
+    const log = createLogText(LogMessageType.INFO, 'REORDER SERVICE: reorderCards method called', parameters);
+    this.logParameters(log);
+    return this.realReorderService.reorderCards(parameters);
+  }
+
+  private logParameters(log: string): void {
+    logPublisher.notify(log, LogMessageType.INFO);
+  }
+}
+
+export { RealReorderService, ReorderServiceWithLogging };

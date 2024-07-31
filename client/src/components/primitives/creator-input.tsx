@@ -11,8 +11,10 @@ const CreatorInput = ({ onSubmit }: Props) => {
   const [name, setName] = useState('');
 
   const onClick = () => {
-    setName('');
-    onSubmit(name);
+    if (name !== '') {
+      setName('');
+      onSubmit(name);
+    }
   };
 
   return (

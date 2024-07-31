@@ -1,1 +1,1 @@
-export { ReorderService } from "./reorder.service";
+export { RealReorderService, ReorderServiceWithLogging } from "./reorder.service";

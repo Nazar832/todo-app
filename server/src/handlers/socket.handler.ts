@@ -2,16 +2,16 @@ import { Server, Socket } from "socket.io";
 
 import { ListEvent } from "../common/enums/enums";
 import { Database } from "../data/database";
-import { ReorderService } from "../services/reorder.service";
+import { ReorderServiceWithLogging } from "../services/reorder.service";
 
 abstract class SocketHandler {
   protected db: Database;
 
-  protected reorderService: ReorderService;
+  protected reorderService: ReorderServiceWithLogging;
 
   protected io: Server;
 
-  public constructor(io: Server, db: Database, reorderService: ReorderService) {
+  public constructor(io: Server, db: Database, reorderService: ReorderServiceWithLogging) {
     this.io = io;
     this.db = db;
     this.reorderService = reorderService;

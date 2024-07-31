@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+// PATTERN: Prototype
 class Card {
   public id: string;
 
@@ -14,6 +15,11 @@ class Card {
     this.description = description;
     this.createdAt = new Date();
     this.id = randomUUID();
+  }
+
+  public clone(): Card {
+    const clonedCard = new Card(this.name, this.description);
+    return clonedCard;
   }
 }
 

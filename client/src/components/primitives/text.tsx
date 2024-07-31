@@ -18,8 +18,10 @@ export const Text = ({ onChange, text }: Props) => {
   useEffect(() => setValue(text), [text]);
 
   const onEdit = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(e.target.value);
-    onChange(e.target.value);
+    if (e.target.value !== '') {
+      setValue(e.target.value);
+      onChange(e.target.value);
+    }
   };
 
   return (

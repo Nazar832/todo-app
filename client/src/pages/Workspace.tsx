@@ -48,7 +48,7 @@ export const Workspace = () => {
 
     if (isReorderLists) {
       setLists(
-        reorderService.reorderLists(lists, source.index, destination.index)
+        reorderService.reorderItems<List>(lists, source.index, destination.index)
       );
       socket.emit(ListEvent.REORDER, source.index, destination.index);
 
@@ -62,6 +62,10 @@ export const Workspace = () => {
       sourceIndex: source.index,
       destinationIndex: destination.index,
     });
+  };
+
+  const onCreateList = (listName: string) => {
+    socket.emit(ListEvent.CREATE, listName)
   };
 
   return (
@@ -84,7 +88,7 @@ export const Workspace = () => {
                 />
               ))}
               {provided.placeholder}
-              <ColumnCreator onCreateList={() => {}} />
+              <ColumnCreator onCreateList={onCreateList} />
             </Container>
           )}
         </Droppable>
